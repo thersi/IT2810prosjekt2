@@ -18,5 +18,6 @@ TODOS (lag issues):
 - Skrive dokumentasjon
 - Context api 
 - Spør studass om "egne komponenter" kl.14-18
+- web/session- storage: siste søk og color theme
 
 
