@@ -14,5 +14,9 @@ TODOS (lag issues):
 - Fikse generell styling 
 - Behandle json-objekter til arrays som nevnt over 
 - Gjøre skalerbart for mobil/nettbrett
+- Skrive tester
+- Skrive dokumentasjon
+- Context api 
+- Spør studass om "egne komponenter" kl.14-18
 
 
