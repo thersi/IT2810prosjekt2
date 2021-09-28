@@ -29,12 +29,19 @@ function App() {
 
   return (
       <div className="App">
-        <button id= 'toggleTheme' onClick={toggleTheme}>
-        Switch to {theme === "light" ? "dark" : "light"} mode
-      </button>
-        <Search></Search>
+        <div className="searc">
+          <Search></Search>
+        </div>
+        <div className="wrapper">
+          <div className="toggle">
+            <button id= 'toggleTheme' onClick={toggleTheme}>
+            Switch to {theme === "light" ? "dark" : "light"} mode
+            </button>
+          </div>
         <div className="displayChart">
-        {renderCorrectChart()}
+          {renderCorrectChart()}
+        </div>
+
         </div>
       </div>
   );
