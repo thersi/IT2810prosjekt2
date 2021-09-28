@@ -35,8 +35,9 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
         }
     }
     const options = {
+        maintainAspectRatio: false,
         plugins: {
-            title: {
+            title: {    
                 display: true,
                 text: "Number of commits per person",
                 padding: {
@@ -44,7 +45,7 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
                     bottom: 25
                 },
                 font: {
-                    size: 30
+                    size: 20,
                 },
             }
         },
@@ -55,8 +56,8 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
                     display: true,
                     text: 'Commits',
                     padding: {
-                        top: 20,
-                        bottom: 25
+                        top: 25,
+                        bottom: 5
                     },
                 }
             },
@@ -65,7 +66,7 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
                     display: true,
                     text: 'Group members',
                     padding: {
-                        top: 20,
+                        top: 5,
                         bottom: 25
                     },
                 }
@@ -73,8 +74,8 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
         }
     }
     return (
-        <div className='barChart'>
-            <Bar data={data} options={options} />
-        </div>
+        
+            <Bar id="barChart" data={data} options={options} />
+        
     )
 }

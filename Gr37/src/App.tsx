@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import './App.css';
 import Search from './components/Search'
 import BarChart from './components/BarChart'
