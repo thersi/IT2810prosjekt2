@@ -1,23 +1,30 @@
+import React, { useState } from "react";
 
 //Metoden tar inn url som github repoet
-function getGithub(url:string){
-    console.log(url)
-const request= 'https://gitlab.stud.idi.ntnu.no/api/v4/projects/11908'+url;
+export default function getEvents(){
+var arrayEvents = new Array()
+const request= 'https://gitlab.stud.idi.ntnu.no/api/v4/projects/11908/events';
 const token = 'Sct5JeQqxKoTAw1Smgyc';
-fetch(request, { method: 'GET',
+const events= fetch(request, { method: 'GET',
  headers: { 'private-token': 'Sct5JeQqxKoTAw1Smgyc', 'content-type': 'application/json'}})
  .then(response => response.json())
- .then( data => console.log(data))
+ .then( data => {for(var i = 0; i < data.length; i++) {
+
+     
+    arrayEvents.push(data[i]);
+ }})
+     
  .catch( error => console.error(error));
+ 
+return arrayEvents}
 
-}
-
+/* 
 export function getAll(){
     getGithub('')
 }
 //Henter issues
 export function getIssues(){
-    getGithub('/issues');
+    console.log(Promise.resolve(getGithub('/issues')));
     
 }
 export function getMembers(){
@@ -29,8 +36,8 @@ export function getMergeRequests(){
     
 }
 export function getEvents(){
-    getGithub('/events');
-    
+     getGithub('/events').
+     
 }
 
 export function getLabels(){
@@ -39,3 +46,4 @@ export function getLabels(){
 }
 
 //Metode for 
+ */
