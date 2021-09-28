@@ -41,6 +41,8 @@ export default class LineChart extends React.Component <ChartData> {
     }
     
     options = {
+        maintainAspectRatio: false,
+
         plugins: {
             title:{
                 display: true, 
@@ -50,7 +52,7 @@ export default class LineChart extends React.Component <ChartData> {
                     bottom: 25
                 },
                 font: {
-                    size:30
+                    size:20
                 },
             }
         },
@@ -61,8 +63,8 @@ export default class LineChart extends React.Component <ChartData> {
                     display: true,
                     text: 'Merges',
                     padding: {
-                        top: 20,
-                        bottom: 25
+                        top: 25,
+                        bottom: 5
                     },
                 }
             },
@@ -71,7 +73,7 @@ export default class LineChart extends React.Component <ChartData> {
                     display: true,
                     text: 'Date',
                     padding: {
-                        top: 20,
+                        top: 5,
                         bottom: 25
                     },
                 }
@@ -80,9 +82,7 @@ export default class LineChart extends React.Component <ChartData> {
     }
 
     render() {
-        return <div className='mergeChart'>
-            <Line data={this.data} options={this.options}></Line>
-        </div>
+        return <Line data={this.data} options={this.options}></Line>
     }
     
 }

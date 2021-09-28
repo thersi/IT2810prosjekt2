@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+.displayChart {
+  position: relative;
+  height:70vw; 
+  padding-right: 30px;
+}
+
