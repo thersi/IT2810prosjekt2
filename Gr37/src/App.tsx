@@ -4,12 +4,12 @@ import Search from './components/Search'
 import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import { ThemeCtx} from './ThemeProvider'
-
+import { ToggleButton } from '@mui/material';
 
 
 function App() {
   const { theme, toggleTheme } = useContext(ThemeCtx);
-  let bar = false; /*implement means of setting the condition
+  let bar = true; /*implement means of setting the condition
   based on the input to the search component*/
 
 
@@ -17,7 +17,7 @@ function App() {
     if (bar) {
       return <BarChart
       xAxis={['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']}
-      yAxis={[12, 19, 3, 5, 2, 3]}
+      yAxis={[12, 19, 3, 29, 2, 3]}
     />
     } else {
       return <LineChart
@@ -29,12 +29,23 @@ function App() {
 
   return (
       <div className="App">
-        <button id= 'toggleTheme' onClick={toggleTheme}>
-        Switch to {theme === "light" ? "dark" : "light"} mode
-      </button>
-        <Search></Search>
+
+        <div className="wrapper">
+          <header className="header">
+            Repository data for group 37
+          </header>
+          <div className='search'>
+          <Search></Search>
+          </div>
+          <div className="toggle">
+            <ToggleButton id='toggleTheme' value="web" size="small" onClick={toggleTheme}>
+              {theme === "light" ? "dark" : "light"} mode
+            </ToggleButton>
+          </div>
         <div className="displayChart">
-        {renderCorrectChart()}
+          {renderCorrectChart()}
+        </div>
+
         </div>
       </div>
   );

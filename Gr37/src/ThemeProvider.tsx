@@ -20,6 +20,7 @@ export const ThemeProvider: React.FC = ({ children }) => {
   document.body.style.color = txtColor;
   document.body.style.backgroundColor = backgroundColor;
 
+
   return (
     <ThemeCtx.Provider value={{ theme, toggleTheme }}>
       {children}

@@ -36,6 +36,7 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
     }
     const options = {
         maintainAspectRatio: false,
+
         plugins: {
             title: {    
                 display: true,
