@@ -4,7 +4,7 @@ import Search from './components/Search'
 import BarChart from './components/BarChart'
 import LineChart from './components/LineChart'
 import { ThemeCtx} from './ThemeProvider'
-
+import { ToggleButton } from '@mui/material';
 
 
 function App() {
@@ -38,9 +38,9 @@ function App() {
           <Search></Search>
           </div>
           <div className="toggle">
-            <button id= 'toggleTheme' onClick={toggleTheme}>
-            Switch to {theme === "light" ? "dark" : "light"} mode
-            </button>
+            <ToggleButton id='toggleTheme' value="web" size="small" onClick={toggleTheme}>
+              {theme === "light" ? "dark" : "light"} mode
+            </ToggleButton>
           </div>
         <div className="displayChart">
           {renderCorrectChart()}
