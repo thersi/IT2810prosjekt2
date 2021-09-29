@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./App.css";
+import getEvents from "./Backend/api/GithubFetch";
+import "./App.css";
 import Search from "./components/Search";
 import BarChart from "./components/BarChart";
 import LineChart from "./components/LineChart";
 import { ThemeCtx } from "./ThemeProvider";
-import getEvents from "./Backend/api/GithubFetch";
-import { displayPartsToString } from "typescript";
+import { ToggleButton } from "@mui/material";
 
 function App() {
   const [getData, setData] = useState<any>([]);
-
   const fetchData = async () => {
     setData(await getEvents());
   };
@@ -18,7 +18,7 @@ function App() {
     fetchData();
   }, []);
   const { theme, toggleTheme } = useContext(ThemeCtx);
-  let bar = false; /*implement means of setting the condition
+  let bar = true; /*implement means of setting the condition
   based on the input to the search component*/
   console.log(getData);
   if (getData === undefined || getData.length === 0) {
@@ -56,11 +56,23 @@ function App() {
 
   return (
     <div className="App">
-      <button id="toggleTheme" onClick={toggleTheme}>
-        Switch to {theme === "light" ? "dark" : "light"} mode
-      </button>
-      <Search></Search>
-      <div className="displayChart">{renderCorrectChart()}</div>
+      <div className="wrapper">
+        <header className="header">Repository data for group 37</header>
+        <div className="search">
+          <Search></Search>
+        </div>
+        <div className="toggle">
+          <ToggleButton
+            id="toggleTheme"
+            value="web"
+            size="small"
+            onClick={toggleTheme}
+          >
+            {theme === "light" ? "dark" : "light"} mode
+          </ToggleButton>
+        </div>
+        <div className="displayChart">{renderCorrectChart()}</div>
+      </div>
     </div>
   );
 }
