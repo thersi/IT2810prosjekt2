@@ -54,6 +54,16 @@ function App() {
     }
   };
 
+  const c = sessionStorage.getItem('count');
+  const dflt_c = JSON.parse(c !== null ? c : "0");
+  const count = dflt_c;
+
+  window.onload = e => {
+    var n = count+1;
+    sessionStorage.setItem('count', JSON.stringify(n));
+    console.log("number of reloads: ", n);
+  }
+
   return (
     <div className="App">
       <div className="wrapper">

@@ -1,15 +1,24 @@
-import React, { useState, Fragment } from "react"
+import React, { useState, Fragment, useEffect } from "react"
 import { Select, MenuItem, TextField, Button, Grid, FormControl, InputLabel, Box } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { LocalizationProvider, DateRangePicker, DateRange } from '@mui/lab';
 
+
 export default function Search() {
-    const [value, setValue] = useState('');
-    const [dates, setDates] = useState<DateRange<Date>>([null, null]);
+    const d  = localStorage.getItem("dates");
+    const v = localStorage.getItem("value")
+    const dflt_d = JSON.parse(d !== null ? d : "[null, null]" );
+    const dflt_v = JSON.parse(v !== null ? v : "");
+    const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
+    const [value, setValue] = useState(dflt_v);
 
-
+    useEffect( () => {
+        localStorage.setItem('dates', JSON.stringify(dates));
+        localStorage.setItem('value', JSON.stringify(value));
+        }, [dates, value])
+    
     const onSearch = () => {
-        console.log(dates, value)
+        console.log(dates, value);
     }
 
     return (
