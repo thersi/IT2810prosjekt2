@@ -14,9 +14,17 @@ function App() {
     setData(await getEvents());
   };
 
+  const [count, setCount] = useState(0);
+
   useEffect(() => {
+    const c = sessionStorage.getItem('count');
+    const dflt_c: number = JSON.parse(c !== (null) ? c : "0");
+    setCount(dflt_c + 1)
+    sessionStorage.setItem('count', JSON.stringify(dflt_c + 1));
+    console.log("number of reloads: ", dflt_c + 1);
     fetchData();
   }, []);
+
   const { theme, toggleTheme } = useContext(ThemeCtx);
   let bar = true; /*implement means of setting the condition
   based on the input to the search component*/
@@ -53,16 +61,6 @@ function App() {
       return <LineChart dates={memberKeys} merges={commitNumbers} />;
     }
   };
-
-  const c = sessionStorage.getItem('count');
-  const dflt_c = JSON.parse(c !== null ? c : "0");
-  const count = dflt_c;
-
-  window.onload = e => {
-    var n = count+1;
-    sessionStorage.setItem('count', JSON.stringify(n));
-    console.log("number of reloads: ", n);
-  }
 
   return (
     <div className="App">
