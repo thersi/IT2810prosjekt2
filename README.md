@@ -26,7 +26,8 @@ Vi har valgt å bruke komponenter fra det eksterne biblioteket MUI i Search-komp
 
 De tekniske kravene sa at vi skulle bruke HTML web storage, derav local storage og session storage, i applikasjonen. Local storage bestemte vi oss å bruke for å lagre valgte datoer og valgt action i søkefunksjonen. Grunnen til dette er fordi det virker logisk at forrige søk blir lagret, slik at denne ikke står tom når økten er ferdig. Den kunne også vært lagret som session storage, og det valget av storage falt på var en felles beslutning. Vi bruker session storage for å sjekke hvor mange ganger nettsiden har blitt reloaded. Dette er en enkel løsning, men ettersom vi brukte en del tid på å implementere local storage, samt mangel på "noe å lagre" i session storage spurte vi studass om dette var tilstrekkelig, noe han bekreftet.
 
-***AJAX***
+**AJAX**
+
 Gruppen har brukt asynkrone API-kall til GitLab APIet ved hjelp av `fetch()`. Dette var en enkel måte å gjøre det på, og vi fant mye dokumentasjon på dette, noe som gjorde det enkelt å ta i bruk. 
 
 **Responsivt web design**
