@@ -17,7 +17,27 @@ export default async function getEvents() {
   const data = await fetch(request)
     .then((r) => r.json())
     .catch((error) => console.log(error));
-  console.log(data[0]);
+  console.log(data)
+
+  return data;
+}
+export async function getAll() {
+  const request = new Request(
+    "https://gitlab.stud.idi.ntnu.no/api/v4/projects/11908",
+    {
+      method: "GET",
+      headers: {
+        "private-token": "Sct5JeQqxKoTAw1Smgyc",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+    }
+  );
+
+  const data = await fetch(request)
+    .then((r) => r.json())
+    .catch((error) => console.log(error));
+  console.log(data)
 
   return data;
 }

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import "./App.css";
-import getEvents from "./Backend/api/GithubFetch";
+import getEvents, { getAll } from "./Backend/api/GithubFetch";
 import "./App.css";
 import Search from "./components/Search";
 import BarChart from "./components/BarChart";
@@ -9,12 +9,27 @@ import { ThemeCtx } from "./ThemeProvider";
 import { ToggleButton } from "@mui/material";
 
 function App() {
+  
   const [getData, setData] = useState<any>([]);
+  const [getAllData, setAllData] = useState<any>([]);
   const fetchData = async () => {
     setData(await getEvents());
   };
+  const fetchAllData = async () => {
+    setAllData(await getAll());
+  };
 
   const [count, setCount] = useState(0);
+  useEffect(() => {
+    const c = sessionStorage.getItem('count');
+    const dflt_c: number = JSON.parse(c !== (null) ? c : "0");
+    setCount(dflt_c + 1)
+    sessionStorage.setItem('count', JSON.stringify(dflt_c + 1));
+    console.log("number of reloads: ", dflt_c + 1);
+    fetchAllData();
+  }, []);
+
+  console.log(getAllData);
 
   useEffect(() => {
     const c = sessionStorage.getItem('count');
@@ -35,7 +50,7 @@ function App() {
   console.log(getData);
   let mergeMembers = new Map();
   const commits = getData
-    .filter((data: any) => data.action_name === "pushed to")
+    //.filter((data: any) => data.action_name === "pushed to")
     .forEach((element: any) => {
       let member = element.author_username;
       mergeMembers.has(member)
