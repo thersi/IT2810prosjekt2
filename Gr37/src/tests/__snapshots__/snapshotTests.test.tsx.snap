@@ -211,3 +211,16 @@ exports[`matches snapshot 2`] = `
   Loading....
 </div>
 `;
+
+exports[`matches snapshot 3`] = `
+<canvas
+  data-testid="canvas"
+  height={150}
+  id="barChart"
+  onClick={[Function]}
+  role="img"
+  width={300}
+/>
+`;
+
+exports[`renders linechart correctly 1`] = `[Function]`;
