@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./App.css";
 import getEvents from "./Backend/api/GithubFetch";
 import "./App.css";

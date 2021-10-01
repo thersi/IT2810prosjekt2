@@ -57,7 +57,7 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
                     display: true,
                     text: 'Commits',
                     padding: {
-                        top: 25,
+                        top: 5,
                         bottom: 5
                     },
                 }
