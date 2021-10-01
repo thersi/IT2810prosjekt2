@@ -45,9 +45,6 @@ export default function Search({
     setMemberKeys(memberKeys);
     setCommitNumbers(commitNumbers);
   };
-
-  // ...................
-
   const [getData, setData] = useState<any>([]);
   const fetchData = async () => {
     setData(await getEvents());
@@ -61,15 +58,21 @@ export default function Search({
   }
 
   let mergeMembers = new Map();
-  const commits = getData.forEach((element: any) => {
-    let member = element.author_username;
-    mergeMembers.has(member)
-      ? mergeMembers.set(
-          member,
-          mergeMembers.get(member) + element.push_data.commit_count
-        )
-      : mergeMembers.set(member, 1);
-  });
+  const commits = getData
+    .filter(
+      (data: any) =>
+        new Date(data.created_at).getTime() >= new Date(dates[0]!).getTime() &&
+        new Date(data.created_at).getTime() <= new Date(dates[1]!).getTime()
+    )
+    .forEach((element: any) => {
+      let member = element.author_username;
+      mergeMembers.has(member)
+        ? mergeMembers.set(
+            member,
+            mergeMembers.get(member) + element.push_data.commit_count
+          )
+        : mergeMembers.set(member, 1);
+    });
 
   let memberKeys: any = Array();
   let commitNumbers: any = Array();
