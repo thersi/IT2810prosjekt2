@@ -63,7 +63,7 @@ export default class LineChart extends React.Component <ChartData> {
                     display: true,
                     text: 'Merges',
                     padding: {
-                        top: 25,
+                        top: 5,
                         bottom: 5
                     },
                 }
