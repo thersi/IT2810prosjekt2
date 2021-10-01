@@ -2,28 +2,82 @@ import React, { useState, Fragment, useEffect, Dispatch } from "react"
 import { Select, MenuItem, TextField, Button, Grid, FormControl, InputLabel, Box } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { LocalizationProvider, DateRangePicker, DateRange } from '@mui/lab';
+import getEvents from "../Backend/api/GithubFetch";
 
 
-export default function Search({ dates, setDates, value, setValue }: { 
-    dates: DateRange<Date>; 
-    setDates: Dispatch<React.SetStateAction<DateRange<Date>>>; 
-    value: string; 
-    setValue: Dispatch<React.SetStateAction<string>> }) {
-    // const d = localStorage.getItem("dates");
-    // const v = localStorage.getItem("value");
-    // const dflt_d = d !== null ? JSON.parse(d) : [null, null];
-    // const dflt_v = v !== null ? JSON.parse(v) : '';
-    // const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
-    // const [value, setValue] = useState<string>(dflt_v);
+export default function Search({ setMemberKeys, setCommitNumbers, setChart }: { setMemberKeys: Dispatch<React.SetStateAction<string[]>>; setCommitNumbers: Dispatch<React.SetStateAction<number[]>>; setChart: Dispatch<React.SetStateAction<number>> }) {
+    const d = localStorage.getItem("dates");
+    const v = localStorage.getItem("value");
+    const dflt_d = d !== null ? JSON.parse(d) : [null, null];
+    const dflt_v = v !== null ? JSON.parse(v) : '';
+    const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
+    const [value, setValue] = useState<string>(dflt_v);
 
-    // useEffect(() => {
-    //     localStorage.setItem('dates', JSON.stringify(dates));
-    //     localStorage.setItem('value', JSON.stringify(value));
-    // }, [dates, value])
+    useEffect(() => {
+        localStorage.setItem('dates', JSON.stringify(dates));
+        localStorage.setItem('value', JSON.stringify(value));
+    }, [dates, value])
 
     const onSearch = () => {
-        console.log(dates, value);
+        if (value === 'Commits') {
+            setChart(1)
+        }
+        else if (value === 'Issues') {
+            setChart(2)
+        }
+        else {
+            setChart(0)
+        }
+        setMemberKeys(memberKeys);
+        setCommitNumbers(commitNumbers);
     }
+
+    // ...................
+
+    const [getData, setData] = useState<any>([]);
+    const fetchData = async () => {
+        setData(await getEvents());
+    };
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    console.log(getData);
+    if (getData === undefined || getData.length === 0) {
+        return <div>Loading....</div>;
+    }
+    console.log(getData);
+    let mergeMembers = new Map();
+    const commits = getData
+        .filter((data: any) => data.action_name === "pushed to")
+        .forEach((element: any) => {
+            let member = element.author_username;
+            mergeMembers.has(member)
+                ? mergeMembers.set(member, mergeMembers.get(member) + 1)
+                : mergeMembers.set(member, 1);
+        });
+
+    let memberKeys: any = Array();
+    let commitNumbers: any = Array();
+
+    //const [memberKeys, setMemberKeys] = useState<string[]>([]);
+    //const [commitNumbers, setCommitNumbers] = useState<number[]>([]);
+
+    mergeMembers.forEach((value: any, key: string) => {
+        // let mk = memberKeys
+        // mk.push(key)
+        // setMemberKeys(mk);
+        // let cm = commitNumbers
+        // cm.push(value)
+        // setCommitNumbers(cm);
+        memberKeys.push(key);
+        commitNumbers.push(value);
+
+    });
+
+    // console.log(memberKeys);
+    // console.log(commitNumbers);
+
 
     return (
         <Grid
