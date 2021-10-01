@@ -7,14 +7,26 @@ import BarChart from "./components/BarChart";
 import LineChart from "./components/LineChart";
 import { ThemeCtx } from "./ThemeProvider";
 import { ToggleButton } from "@mui/material";
+import { DateRange } from '@mui/lab';
 
 function App() {
   const [getData, setData] = useState<any>([]);
   const fetchData = async () => {
     setData(await getEvents());
   };
+  const d = localStorage.getItem("dates");
+  const v = localStorage.getItem("value");
+  const dflt_d = d !== null ? JSON.parse(d) : [null, null];
+  const dflt_v = v !== null ? JSON.parse(v) : '';
+  const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
+  const [value, setValue] = useState<string>(dflt_v);
 
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem('dates', JSON.stringify(dates));
+    localStorage.setItem('value', JSON.stringify(value));
+  }, [dates, value])
 
   useEffect(() => {
     const c = sessionStorage.getItem('count');
@@ -33,6 +45,7 @@ function App() {
     return <div>Loading....</div>;
   }
   console.log(getData);
+  
   let mergeMembers = new Map();
   const commits = getData
     .filter((data: any) => data.action_name === "pushed to")
@@ -67,7 +80,7 @@ function App() {
       <div className="wrapper">
         <header className="header">Repository data for group 37</header>
         <div className="search">
-          <Search></Search>
+          <Search value={value} setValue={setValue} dates={dates} setDates={setDates} />
         </div>
         <div className="toggle">
           <ToggleButton

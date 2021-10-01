@@ -1,21 +1,25 @@
-import React, { useState, Fragment, useEffect } from "react"
+import React, { useState, Fragment, useEffect, Dispatch } from "react"
 import { Select, MenuItem, TextField, Button, Grid, FormControl, InputLabel, Box } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { LocalizationProvider, DateRangePicker, DateRange } from '@mui/lab';
 
 
-export default function Search() {
-    const d = localStorage.getItem("dates");
-    const v = localStorage.getItem("value");
-    const dflt_d = d !== null ? JSON.parse(d) : [null, null];
-    const dflt_v = v !== null ? JSON.parse(v) : '';
-    const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
-    const [value, setValue] = useState<string>(dflt_v);
+export default function Search({ dates, setDates, value, setValue }: { 
+    dates: DateRange<Date>; 
+    setDates: Dispatch<React.SetStateAction<DateRange<Date>>>; 
+    value: string; 
+    setValue: Dispatch<React.SetStateAction<string>> }) {
+    // const d = localStorage.getItem("dates");
+    // const v = localStorage.getItem("value");
+    // const dflt_d = d !== null ? JSON.parse(d) : [null, null];
+    // const dflt_v = v !== null ? JSON.parse(v) : '';
+    // const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
+    // const [value, setValue] = useState<string>(dflt_v);
 
-    useEffect(() => {
-        localStorage.setItem('dates', JSON.stringify(dates));
-        localStorage.setItem('value', JSON.stringify(value));
-    }, [dates, value])
+    // useEffect(() => {
+    //     localStorage.setItem('dates', JSON.stringify(dates));
+    //     localStorage.setItem('value', JSON.stringify(value));
+    // }, [dates, value])
 
     const onSearch = () => {
         console.log(dates, value);
