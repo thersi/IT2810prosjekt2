@@ -23,6 +23,8 @@ type DateFilter = (merge_data: Merge) => boolean;
 const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
   const start_time = getDateTimeFix(start_date);
   const end_time = getDateTimeFix(end_date);
+  console.log(start_time);
+  console.log(end_time);
   return (data: Merge) =>
     getDateTimeFix(data.created_at) >= start_time &&
     getDateTimeFix(data.created_at) <= end_time;
@@ -43,8 +45,8 @@ const Search = ({
   const dflt_v = v !== null ? JSON.parse(v) : "";
   const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
   const [value, setValue] = useState<string>(dflt_v);
-  const [events, setEvents] = useState<Event[]>();
-  const [mergeData, setMergeData] = useState<Merge[]>();
+  const [eventsLoaded, setEventsLoaded] = useState<boolean>(false);
+  const [mergesLoaded, setMergesLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem("dates", JSON.stringify(dates));
@@ -62,52 +64,63 @@ const Search = ({
   };
 
   useEffect(() => {
-    getEvents().then(setEvents);
-  }, [setEvents]);
+    getEvents().then((events) => {
+      let commitMembers = new Map();
+
+      events
+        .filter(makeFilter(dates[0]!, dates[1]!))
+        .forEach((element: Event) => {
+          let member = element.author.id;
+          if (commitMembers.has(member)) {
+            commitMembers.set(
+              member,
+              commitMembers.get(member) + element.push_data.commit_count
+            );
+          } else {
+            commitMembers.set(member, 1);
+          }
+        });
+
+      let memberKeys: string[] = [];
+      let commitNumbers: number[] = [];
+      commitMembers.forEach((value: number, key: string) => {
+        memberKeys.push(key);
+        commitNumbers.push(value);
+      });
+
+      setMemberKeys(memberKeys);
+      setCommitNumbers(commitNumbers);
+      setEventsLoaded(true);
+    });
+  }, [dates, setEventsLoaded]);
 
   useEffect(() => {
-    getMerge().then(setMergeData);
-  }, [setMergeData]);
+    getMerge().then((mergeData) => {
+      let membersMergeRequests = new Map();
+      mergeData
+        .filter(makeFilter(dates[0]!, dates[1]!))
+        .forEach((element: Merge) => {
+          let member = element.author.id;
+          if (membersMergeRequests.has(member)) {
+            membersMergeRequests.set(
+              member,
+              membersMergeRequests.get(member) + 1
+            );
+          } else {
+            membersMergeRequests.set(member, 1);
+          }
+        });
+    });
 
-  if (events === undefined || mergeData === undefined) {
+    let memberMergeKeys: string[] = [];
+    let mergeNumbers: number[] = [];
+
+    setMergesLoaded(true);
+  }, [dates, setMergesLoaded]);
+
+  if (!mergesLoaded || !eventsLoaded) {
     return <div>Loading....</div>;
   }
-
-  let membersMergeRequests = new Map();
-  const mergeRequests = mergeData
-    .filter(makeFilter(dates[0]!, dates[1]!))
-    .forEach((element: Merge) => {
-      let member = element.author.id;
-      if (membersMergeRequests.has(member)) {
-        membersMergeRequests.set(member, membersMergeRequests.get(member) + 1);
-      } else {
-        membersMergeRequests.set(member, 1);
-      }
-    });
-
-  let memberMergeKeys: string[] = [];
-  let mergeNumbers: number[] = [];
-  let commitMembers = new Map();
-  const commits = events
-    .filter(makeFilter(dates[0]!, dates[1]!))
-    .forEach((element: Event) => {
-      let member = element.author.id;
-      if (commitMembers.has(member)) {
-        commitMembers.set(
-          member,
-          commitMembers.get(member) + element.push_data.commit_count
-        );
-      } else {
-        commitMembers.set(member, 1);
-      }
-    });
-
-  let memberKeys: string[] = [];
-  let commitNumbers: number[] = [];
-  commitMembers.forEach((value: number, key: string) => {
-    memberKeys.push(key);
-    commitNumbers.push(value);
-  });
 
   return (
     <Grid
@@ -130,7 +143,7 @@ const Search = ({
               setValue(event.target.value as string);
             }}
           >
-            <MenuItem value={"Issues"}>Merge Data</MenuItem> // TODO: ENdre til
+            <MenuItem value={"Issues"}>Merge Data</MenuItem> // TODO: Endre til
             mergel elns
             <MenuItem value={"Commits"}>Commit Data</MenuItem>
           </Select>
