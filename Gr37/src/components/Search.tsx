@@ -11,9 +11,24 @@ import {
 } from "@mui/material";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { LocalizationProvider, DateRangePicker, DateRange } from "@mui/lab";
-import getEvents from "../Backend/api/GithubFetch";
+import getEvents, { getMerge } from "../Backend/api/GithubFetch";
+import { Merge, Event } from "../Models/event";
+import { getDate } from "date-fns";
 
-export default function Search({
+const getDateTimeFix = (date: Date): number => {
+  return new Date(date).getTime();
+};
+
+type DateFilter = (merge_data: Merge) => boolean;
+const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
+  const start_time = getDateTimeFix(start_date);
+  const end_time = getDateTimeFix(end_date);
+  return (data: Merge) =>
+    getDateTimeFix(data.created_at) >= start_time &&
+    getDateTimeFix(data.created_at) <= end_time;
+};
+
+const Search = ({
   setMemberKeys,
   setCommitNumbers,
   setChart,
@@ -21,13 +36,15 @@ export default function Search({
   setMemberKeys: Dispatch<React.SetStateAction<string[]>>;
   setCommitNumbers: Dispatch<React.SetStateAction<number[]>>;
   setChart: Dispatch<React.SetStateAction<number>>;
-}) {
+}) => {
   const d = localStorage.getItem("dates");
   const v = localStorage.getItem("value");
   const dflt_d = d !== null ? JSON.parse(d) : [null, null];
   const dflt_v = v !== null ? JSON.parse(v) : "";
   const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
   const [value, setValue] = useState<string>(dflt_v);
+  const [events, setEvents] = useState<Event[]>();
+  const [mergeData, setMergeData] = useState<Merge[]>();
 
   useEffect(() => {
     localStorage.setItem("dates", JSON.stringify(dates));
@@ -42,57 +59,55 @@ export default function Search({
     } else {
       setChart(0);
     }
-    setMemberKeys(memberKeys);
-    setCommitNumbers(commitNumbers);
   };
-  const [getData, setData] = useState<any>([]);
-  const fetchData = async () => {
-    setData(await getEvents());
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
 
-  if (getData === undefined || getData.length === 0) {
+  useEffect(() => {
+    getEvents().then(setEvents);
+  }, [setEvents]);
+
+  useEffect(() => {
+    getMerge().then(setMergeData);
+  }, [setMergeData]);
+
+  if (events === undefined || mergeData === undefined) {
     return <div>Loading....</div>;
   }
 
-  let mergeMembers = new Map();
-  const commits = getData
-    .filter(
-      (data: any) =>
-        new Date(data.created_at).getTime() >= new Date(dates[0]!).getTime() &&
-        new Date(data.created_at).getTime() <= new Date(dates[1]!).getTime()
-    )
-    .forEach((element: any) => {
-      let member = element.author_username;
-      mergeMembers.has(member)
-        ? mergeMembers.set(
-            member,
-            mergeMembers.get(member) + element.push_data.commit_count
-          )
-        : mergeMembers.set(member, 1);
+  let membersMergeRequests = new Map();
+  const mergeRequests = mergeData
+    .filter(makeFilter(dates[0]!, dates[1]!))
+    .forEach((element: Merge) => {
+      let member = element.author.id;
+      if (membersMergeRequests.has(member)) {
+        membersMergeRequests.set(member, membersMergeRequests.get(member) + 1);
+      } else {
+        membersMergeRequests.set(member, 1);
+      }
     });
 
-  let memberKeys: any = Array();
-  let commitNumbers: any = Array();
+  let memberMergeKeys: string[] = [];
+  let mergeNumbers: number[] = [];
+  let commitMembers = new Map();
+  const commits = events
+    .filter(makeFilter(dates[0]!, dates[1]!))
+    .forEach((element: Event) => {
+      let member = element.author.id;
+      if (commitMembers.has(member)) {
+        commitMembers.set(
+          member,
+          commitMembers.get(member) + element.push_data.commit_count
+        );
+      } else {
+        commitMembers.set(member, 1);
+      }
+    });
 
-  //const [memberKeys, setMemberKeys] = useState<string[]>([]);
-  //const [commitNumbers, setCommitNumbers] = useState<number[]>([]);
-
-  mergeMembers.forEach((value: any, key: string) => {
-    // let mk = memberKeys
-    // mk.push(key)
-    // setMemberKeys(mk);
-    // let cm = commitNumbers
-    // cm.push(value)
-    // setCommitNumbers(cm);
+  let memberKeys: string[] = [];
+  let commitNumbers: number[] = [];
+  commitMembers.forEach((value: number, key: string) => {
     memberKeys.push(key);
     commitNumbers.push(value);
   });
-
-  // console.log(memberKeys);
-  // console.log(commitNumbers);
 
   return (
     <Grid
@@ -115,8 +130,9 @@ export default function Search({
               setValue(event.target.value as string);
             }}
           >
-            <MenuItem value={"Issues"}>Issues</MenuItem>
-            <MenuItem value={"Commits"}>Commits</MenuItem>
+            <MenuItem value={"Issues"}>Merge Data</MenuItem> // TODO: ENdre til
+            mergel elns
+            <MenuItem value={"Commits"}>Commit Data</MenuItem>
           </Select>
         </FormControl>
       </Grid>
@@ -148,4 +164,6 @@ export default function Search({
       </Grid>
     </Grid>
   );
-}
+};
+
+export default Search;
