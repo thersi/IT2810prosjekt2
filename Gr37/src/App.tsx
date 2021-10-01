@@ -55,9 +55,9 @@ function App() {
   console.log(commitNumbers);
 
   const renderCorrectChart = () => {
-    if (bar) {
+    if (bar) { //HER MÅ DET VÆRE ANNEN LOGIKK, BASERT PÅ VALG I SEARCH
       return <BarChart xAxis={memberKeys} yAxis={commitNumbers} />;
-    } else {
+    } else { //LINECHART SKAL HA ANDRE DATA, SE VARIABELNAVN
       return <LineChart dates={memberKeys} merges={commitNumbers} />;
     }
   };
