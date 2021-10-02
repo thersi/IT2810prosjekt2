@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./App.css";
-import getEvents from "./Backend/api/GithubFetch";
 import "./App.css";
 import Search from "./components/Search";
 import BarChart from "./components/BarChart";
