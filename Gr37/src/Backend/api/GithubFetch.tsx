@@ -22,7 +22,6 @@ export default async function getEvents() {
   const data = await fetch(request)
     .then((r) => r.json())
     .catch((error) => console.log(error));
-  console.log(data);
 
   return data;
 }
@@ -40,6 +39,5 @@ export async function getMerge() {
   const data = await fetch(request)
     .then((r) => r.json())
     .catch((error) => console.log(error));
-  console.log(data);
   return data;
 }

@@ -22,8 +22,6 @@ type DateFilter = (merge_data: Merge) => boolean;
 const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
   const start_time = getDateTimeFix(start_date);
   const end_time = getDateTimeFix(end_date);
-  console.log(start_time);
-  console.log(end_time);
   return (data: Merge) =>
     getDateTimeFix(data.created_at) >= start_time &&
     getDateTimeFix(data.created_at) <= end_time;
