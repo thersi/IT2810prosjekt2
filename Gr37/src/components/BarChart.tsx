@@ -5,9 +5,9 @@ Component ment to show number of commits per person
 */
 
 export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis: Array<number> }) {
-
-    //Need to take in arrays of names and commits (same order)
-
+/* The component takes inn an array of "members" and and array og "commits pr. member"
+Members are displayed at the x-axis, and number of commits at the y-axis.
+Lists of colores for the different x-axis elements in the diagram are provided */
     const data = {
         labels: xAxis,
         datasets: [{
@@ -34,6 +34,7 @@ export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis
             fontSize: 25
         }
     }
+    // Visual options 
     const options = {
         maintainAspectRatio: false,
 
