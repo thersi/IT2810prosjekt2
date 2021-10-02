@@ -109,19 +109,21 @@ const Search = ({
   useEffect(() => {
     getMerge().then((mergeData) => {
       let membersMergeRequests = new Map();
-      let start: Date = dates[0]!;
-      let end: Date = dates[1]!;
-      for (let date = start; date <= end && date >= start; date.getDate + 1) {
-        membersMergeRequests.set(date, 0);
-      }
       mergeData
         .filter(makeFilter(dates[0]!, dates[1]!))
-        .map((element: Merge) => {
-          return element.created_at;
-        })
-        .forEach((date: Date) => {
-          membersMergeRequests.set(date, membersMergeRequests.get(date) + 1);
+        .forEach((element: Merge) => {
+          let date = new Date(element.created_at);
+          if (membersMergeRequests.has(date.toDateString())) {
+            membersMergeRequests.set(
+              date.toDateString(),
+              membersMergeRequests.get(date.toDateString()) + 1
+            );
+          } else {
+            membersMergeRequests.set(date.toDateString(), 1);
+          }
         });
+      console.log(membersMergeRequests);
+
       let memberMergeKeys: string[] = [];
       let mergeNumbers: number[] = [];
       membersMergeRequests.forEach((value: number, key: string) => {
