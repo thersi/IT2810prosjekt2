@@ -86,8 +86,8 @@ function App() {
         <header className="header">Repository data for group 37</header>
         <div className="search">
           <Search
-            setCommitNumbers={setCommitNumbers}
-            setMemberKeys={setMemberKeys}
+            setYAxis={setCommitNumbers}
+            setXAxis={setMemberKeys}
             setChart={setChart}
           ></Search>
         </div>
