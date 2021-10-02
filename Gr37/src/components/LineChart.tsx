@@ -16,9 +16,7 @@ export default class LineChart extends React.Component <Props> {
 /* The component takes two arrays as input."
 Dates are displayed at the x-axis, and number of merges pr day at the y-axis.
 Lists of colores for the different x-axis elements in the diagram are provided */
-    constructor(props: Props) {
-        super(props);
-    }
+
     state = {
         d: this.props.dates,
         m: this.props.merges
