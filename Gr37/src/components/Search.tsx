@@ -31,10 +31,12 @@ const Search = ({
   setXAxis,
   setYAxis,
   setChart,
+  setKey,
 }: {
   setXAxis: Dispatch<React.SetStateAction<string[]>>;
   setYAxis: Dispatch<React.SetStateAction<number[]>>;
   setChart: Dispatch<React.SetStateAction<number>>;
+  setKey: Dispatch<React.SetStateAction<number>>;
 }) => {
   const d = localStorage.getItem("dates");
   const v = localStorage.getItem("value");
@@ -72,6 +74,7 @@ const Search = ({
       setXAxis(xAxisMerges);
       setYAxis(yAxisMerges);
       setChart(2);
+      setKey(Math.floor(Math.random() * 100));
     } else {
       setChart(0);
     }

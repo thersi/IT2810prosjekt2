@@ -29,6 +29,7 @@ function App() {
   const [memberKeys, setMemberKeys] = useState<string[]>([]);
   const [commitNumbers, setCommitNumbers] = useState<number[]>([]);
   const [chart, setChart] = useState<number>(0);
+  const [key, setKey] = useState<number>(0);
 
   const renderCorrectChart = () => {
     if (chart === 1) {
@@ -36,9 +37,9 @@ function App() {
       return <BarChart xAxis={memberKeys} yAxis={commitNumbers} />;
     } else if (chart === 2) {
       //LINECHART SKAL HA ANDRE DATA, SE VARIABELNAVN
-      return <LineChart dates={memberKeys} merges={commitNumbers} />;
+      return <LineChart key={key} dates={memberKeys} merges={commitNumbers} />;
     } else {
-      return <p>no data</p>;
+      return <p>Perform a search to display data</p>;
     }
   };
 
@@ -51,6 +52,7 @@ function App() {
             setYAxis={setCommitNumbers}
             setXAxis={setMemberKeys}
             setChart={setChart}
+            setKey={setKey}
           ></Search>
         </div>
         <div className="toggle">
