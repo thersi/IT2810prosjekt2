@@ -28,12 +28,12 @@ const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
 };
 
 const Search = ({
-  setMemberKeys,
-  setCommitNumbers,
+  setXAxis,
+  setYAxis,
   setChart,
 }: {
-  setMemberKeys: Dispatch<React.SetStateAction<string[]>>;
-  setCommitNumbers: Dispatch<React.SetStateAction<number[]>>;
+  setXAxis: Dispatch<React.SetStateAction<string[]>>;
+  setYAxis: Dispatch<React.SetStateAction<number[]>>;
   setChart: Dispatch<React.SetStateAction<number>>;
 }) => {
   const d = localStorage.getItem("dates");
@@ -45,6 +45,11 @@ const Search = ({
   const [eventsLoaded, setEventsLoaded] = useState<boolean>(false);
   const [mergesLoaded, setMergesLoaded] = useState<boolean>(false);
 
+  const [xAxisCommits, setXAxisCommits] = useState<string[]>([]);
+  const [yAxisCommits, setYAxisCommits] = useState<number[]>([]);
+  const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
+  const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
+
   useEffect(() => {
     localStorage.setItem("dates", JSON.stringify(dates));
     localStorage.setItem("value", JSON.stringify(value));
@@ -52,18 +57,26 @@ const Search = ({
 
   const onSearch = () => {
     if (value === "Commits") {
+      console.log("y commit: ", yAxisCommits);
+      console.log("x commits: ", xAxisCommits);
+      setXAxis(xAxisCommits);
+      setYAxis(yAxisCommits);
       setChart(1);
     } else if (value === "Issues") {
+      console.log("y merge: ", yAxisMerges);
+      console.log("x merge: ", xAxisMerges);
+      setXAxis(xAxisMerges);
+      setYAxis(yAxisMerges);
       setChart(2);
     } else {
       setChart(0);
     }
   };
 
+  //
   useEffect(() => {
     getEvents().then((events) => {
       let commitMembers = new Map();
-
       events
         .filter(makeFilter(dates[0]!, dates[1]!))
         .forEach((element: Event) => {
@@ -77,7 +90,6 @@ const Search = ({
             commitMembers.set(member, 1);
           }
         });
-
       let memberKeys: string[] = [];
       let commitNumbers: number[] = [];
       commitMembers.forEach((value: number, key: string) => {
@@ -85,8 +97,8 @@ const Search = ({
         commitNumbers.push(value);
       });
 
-      setMemberKeys(memberKeys);
-      setCommitNumbers(commitNumbers);
+      setXAxisCommits(memberKeys);
+      setYAxisCommits(commitNumbers);
       setEventsLoaded(true);
     });
   }, [dates, setEventsLoaded]);
@@ -97,22 +109,28 @@ const Search = ({
       mergeData
         .filter(makeFilter(dates[0]!, dates[1]!))
         .forEach((element: Merge) => {
-          let member = element.author.id;
-          if (membersMergeRequests.has(member)) {
+          let date = new Date(element.created_at);
+          if (membersMergeRequests.has(date.toDateString())) {
             membersMergeRequests.set(
-              member,
-              membersMergeRequests.get(member) + 1
+              date.toDateString(),
+              membersMergeRequests.get(date.toDateString()) + 1
             );
           } else {
-            membersMergeRequests.set(member, 1);
+            membersMergeRequests.set(date.toDateString(), 1);
           }
         });
+      console.log(membersMergeRequests);
+
+      let memberMergeKeys: string[] = [];
+      let mergeNumbers: number[] = [];
+      membersMergeRequests.forEach((value: number, key: string) => {
+        memberMergeKeys.push(key);
+        mergeNumbers.push(value);
+      });
+      setXAxisMerges(memberMergeKeys);
+      setYAxisMerges(mergeNumbers);
+      setMergesLoaded(true);
     });
-
-    let memberMergeKeys: string[] = [];
-    let mergeNumbers: number[] = [];
-
-    setMergesLoaded(true);
   }, [dates, setMergesLoaded]);
 
   if (!mergesLoaded || !eventsLoaded) {

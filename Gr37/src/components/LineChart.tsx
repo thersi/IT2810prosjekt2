@@ -2,19 +2,20 @@ import React from 'react'
 import { Line } from 'react-chartjs-2'
 
 /* 
-Component ment to show e.x. number of commits, open issues, merges etc. over a timeperiod
-Need to fix so that it can take in data. uses dummy data for now. 
+Component ment to show number of merges over a timeperiod
 */
 type ChartData = {
    dates: string[];
    merges: number[];
   };
 
-/* setState in parent, pass states as props to this element. number of merges 
-and their respective dates must be en the same order in the arrays of the props*/
-
+/* setState in parent, passes its states as props to this element. Takes two arrays, 
+namely an array og dates and an array og "number of commits" for the respective dates*/
 
 export default class LineChart extends React.Component <ChartData> {
+/* The component takes two arrays as input."
+Dates are displayed at the x-axis, and number of merges pr day at the y-axis.
+Lists of colores for the different x-axis elements in the diagram are provided */
     data = {
         labels: this.props.dates,
         datasets: [{
@@ -39,7 +40,7 @@ export default class LineChart extends React.Component <ChartData> {
             borderWidth: 3
         }]
     }
-    
+    // Visual options
     options = {
         maintainAspectRatio: false,
 
