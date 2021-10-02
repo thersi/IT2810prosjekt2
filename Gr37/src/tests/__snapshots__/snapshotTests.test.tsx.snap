@@ -51,7 +51,7 @@ exports[`matches snapshot 1`] = `
       className="displayChart"
     >
       <p>
-        no data
+        Perform a search to display data
       </p>
     </div>
   </div>
