@@ -18,6 +18,10 @@ const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
         getDateTimeFix(data.created_at) <= end_time;
 };
 
+/**
+ * Component for making a search. The user fills in an action, start date and end date. The search extracts 
+ * the information from the backend functions and sends the axe-value to the parent node, App
+ */
 const Search = ({
     setXAxis,
     setYAxis,
@@ -40,8 +44,12 @@ const Search = ({
     const [yAxisCommits, setYAxisCommits] = useState<number[]>([]);
     const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
     const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
-    const [btnDisable, setBtnDisable] = useState<boolean>(true)
+    const [btnDisable, setBtnDisable] = useState<boolean>(true);
 
+    /**
+     * Function runs when the search button is clicked. It sends the search-result to App with the
+     * set-functions that were sent as props.
+     */
     const onSearch = () => {
         if (value === "commits") {
             console.log("y commit: ", yAxisCommits);
@@ -60,10 +68,12 @@ const Search = ({
         }
     };
 
-    /* The selected dates and action is stored locally on the website by use of HTML localStorage. The 
-    dates are converted into a string and placed in a JSON file before they are stored. When called upon, 
-    they are parsed back to its original format. The same applies to the action value. We use a useEffect 
-    to perform the storing of the data on the site. */
+    /**
+     * The selected dates and action is stored locally on the website by use of HTML localStorage. The 
+     * dates are converted into a string and placed in a JSON file before they are stored. When called upon, 
+     * they are parsed back to its original format. The same applies to the action value. We use a useEffect 
+     * to perform the storing of the data on the site.
+     */
     useEffect(() => {
         localStorage.setItem("dates", JSON.stringify(dates));
         localStorage.setItem("value", JSON.stringify(value));
@@ -75,7 +85,9 @@ const Search = ({
         }
     }, [dates, value]);
 
-    // commits
+    /**
+     * Filters the commit data based on the search options and sets det x- and y-axis for commits. 
+     */
     useEffect(() => {
         getEvents().then((events) => {
             let commitsMap = new Map();
@@ -104,7 +116,9 @@ const Search = ({
         });
     }, [dates, setEventsLoaded]);
 
-    // Merges
+    /**
+     * Filters the merge data based on the search options and sets det x- and y-axis for merges. 
+     */
     useEffect(() => {
         getMerge().then((mergeData) => {
             let mergesMap = new Map();
@@ -133,6 +147,7 @@ const Search = ({
         });
     }, [dates, setMergesLoaded]);
 
+    /** Sets loading-screen before all dates are retrieved and processed */
     if (!mergesLoaded || !eventsLoaded) {
         return <div>Loading....</div>;
     }

@@ -66,7 +66,7 @@ Lists of colores for the different x-axis elements in the diagram are provided *
             x: {
                 title: {
                     display: true,
-                    text: 'Group members',
+                    text: 'Member ids',
                     padding: {
                         top: 5,
                         bottom: 25

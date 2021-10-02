@@ -16,21 +16,22 @@ function App() {
   /* HTML session storage is used to count the number of times the website has been refreshed. This is done
   by a useEffect which increases the counter by one each time the website is refreshed. The value is then stored
   in the session storage as a JSON file. When needed, the value is collected from the JSON file and parsed back to 
-  its orginal format. */ 
-
+  its orginal format. */
   useEffect(() => {
     const c = sessionStorage.getItem("count");
     const dflt_c: number = JSON.parse(c !== null ? c : "0");
     sessionStorage.setItem("count", JSON.stringify(dflt_c + 1));
   }, []);
 
+  /**
+   * Renders a BarChart if search action is commits, a LineChart if search-acion is merges, or nothing if 
+   * a search has not been made yet.
+   */
   const renderCorrectChart = () => {
     if (chart === 1) {
-      //HER MÅ DET VÆRE ANNEN LOGIKK, BASERT PÅ VALG I SEARCH
       console.log('BarChart: ', xAxis, yAxis)
       return <BarChart xAxis={xAxis} yAxis={yAxis} />;
     } else if (chart === 2) {
-      //LINECHART SKAL HA ANDRE DATA, SE VARIABELNAVN
       console.log('lineChart: ', xAxis, yAxis)
       return <LineChart xAxis={xAxis} yAxis={yAxis} />;
     } else {
@@ -58,7 +59,7 @@ function App() {
           >
             {theme === "light" ? "dark" : "light"} mode
           </ToggleButton>
-        </div>
+        </div >
         <div className="displayChart">{renderCorrectChart()}</div>
       </div>
     </div>
