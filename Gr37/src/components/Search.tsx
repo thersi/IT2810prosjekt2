@@ -13,7 +13,6 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { LocalizationProvider, DateRangePicker, DateRange } from "@mui/lab";
 import getEvents, { getMerge } from "../Backend/api/GithubFetch";
 import { Merge, Event } from "../Models/event";
-import { getDate } from "date-fns";
 
 const getDateTimeFix = (date: Date): number => {
   return new Date(date).getTime();

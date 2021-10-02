@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 const BASE_URL = "https://gitlab.stud.idi.ntnu.no/api/v4/projects/11908/";
 
 /*
