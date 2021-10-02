@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2'
 /* 
 Component ment to show number of merges over a timeperiod
 */
-type ChartData = {
+interface Props  {
    dates: string[];
    merges: number[];
   };
@@ -12,15 +12,27 @@ type ChartData = {
 /* setState in parent, passes its states as props to this element. Takes two arrays, 
 namely an array og dates and an array og "number of commits" for the respective dates*/
 
-export default class LineChart extends React.Component <ChartData> {
+export default class LineChart extends React.Component <Props> {
 /* The component takes two arrays as input."
 Dates are displayed at the x-axis, and number of merges pr day at the y-axis.
 Lists of colores for the different x-axis elements in the diagram are provided */
+    constructor(props: Props) {
+        super(props);
+    }
+    state = {
+        d: this.props.dates,
+        m: this.props.merges
+      };
+
+    componentWillReceiveProps(nextProps: { dates: Array<string>; merges: Array<number> }) {
+        this.setState({ d: nextProps.dates, m: nextProps.merges});  
+    };
+
     data = {
-        labels: this.props.dates,
+        labels: this.state.d,
         datasets: [{
             label: 'Merges',
-            data: this.props.merges,
+            data: this.state.m,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
