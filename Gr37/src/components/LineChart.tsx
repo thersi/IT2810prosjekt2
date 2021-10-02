@@ -5,8 +5,8 @@ import { Line } from 'react-chartjs-2'
 Component ment to show number of merges over a timeperiod
 */
 interface Props  {
-   dates: string[];
-   merges: number[];
+   xAxis: string[];
+   yAxis: number[];
   };
 
 /* setState in parent, passes its states as props to this element. Takes two arrays, 
@@ -18,15 +18,15 @@ Dates are displayed at the x-axis, and number of merges pr day at the y-axis.
 Lists of colores for the different x-axis elements in the diagram are provided */
 
     state = {
-        d: this.props.dates,
-        m: this.props.merges
+        x: this.props.xAxis,
+        y: this.props.yAxis
       };
 
     data = {
-        labels: this.state.d,
+        labels: this.state.x,
         datasets: [{
             label: 'Merges',
-            data: this.state.m,
+            data: this.state.y,
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
