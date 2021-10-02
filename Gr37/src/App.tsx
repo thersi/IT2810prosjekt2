@@ -8,32 +8,28 @@ import { ThemeCtx } from "./ThemeProvider";
 import { ToggleButton } from "@mui/material";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { theme, toggleTheme } = useContext(ThemeCtx);
+  const [xAxis, setXAxis] = useState<string[]>([]);
+  const [yAxis, setYAxis] = useState<number[]>([]);
+  const [chart, setChart] = useState<number>(0);
 
   useEffect(() => {
     const c = sessionStorage.getItem("count");
     const dflt_c: number = JSON.parse(c !== null ? c : "0");
-    setCount(dflt_c + 1);
     sessionStorage.setItem("count", JSON.stringify(dflt_c + 1));
   }, []);
-
-  const { theme, toggleTheme } = useContext(ThemeCtx);
-  let bar = true; /*implement means of setting the condition
-  based on the input to the search component*/
-
-  const [memberKeys, setMemberKeys] = useState<string[]>([]);
-  const [commitNumbers, setCommitNumbers] = useState<number[]>([]);
-  const [chart, setChart] = useState<number>(0);
 
   const renderCorrectChart = () => {
     if (chart === 1) {
       //HER MÅ DET VÆRE ANNEN LOGIKK, BASERT PÅ VALG I SEARCH
-      return <BarChart xAxis={memberKeys} yAxis={commitNumbers} />;
+      console.log('BarChart: ', xAxis, yAxis)
+      return <BarChart xAxis={xAxis} yAxis={yAxis} />;
     } else if (chart === 2) {
       //LINECHART SKAL HA ANDRE DATA, SE VARIABELNAVN
-      return <LineChart dates={memberKeys} merges={commitNumbers} />;
+      console.log('lineChart: ', xAxis, yAxis)
+      return <LineChart xAxis={xAxis} yAxis={yAxis} />;
     } else {
-      return <p>no data</p>;
+      return <p>please make a search</p>;
     }
   };
 
@@ -43,10 +39,10 @@ function App() {
         <header className="header">Repository data for group 37</header>
         <div className="search">
           <Search
-            setYAxis={setCommitNumbers}
-            setXAxis={setMemberKeys}
+            setYAxis={setYAxis}
+            setXAxis={setXAxis}
             setChart={setChart}
-          ></Search>
+          />
         </div>
         <div className="toggle">
           <ToggleButton

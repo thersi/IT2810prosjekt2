@@ -1,197 +1,187 @@
 import React, { useState, Fragment, useEffect, Dispatch } from "react";
-import {
-  Select,
-  MenuItem,
-  TextField,
-  Button,
-  Grid,
-  FormControl,
-  InputLabel,
-  Box,
-} from "@mui/material";
+import { Select, MenuItem, TextField, Button, Grid, FormControl, InputLabel, Box } from "@mui/material";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { LocalizationProvider, DateRangePicker, DateRange } from "@mui/lab";
 import getEvents, { getMerge } from "../Backend/api/GithubFetch";
 import { Merge, Event } from "../Models/event";
 
 const getDateTimeFix = (date: Date): number => {
-  return new Date(date).getTime();
+    return new Date(date).getTime();
 };
 
 type DateFilter = (merge_data: Merge) => boolean;
 const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
-  const start_time = getDateTimeFix(start_date);
-  const end_time = getDateTimeFix(end_date);
-  return (data: Merge) =>
-    getDateTimeFix(data.created_at) >= start_time &&
-    getDateTimeFix(data.created_at) <= end_time;
+    const start_time = getDateTimeFix(start_date);
+    const end_time = getDateTimeFix(end_date);
+    return (data: Merge) =>
+        getDateTimeFix(data.created_at) >= start_time &&
+        getDateTimeFix(data.created_at) <= end_time;
 };
 
 const Search = ({
-  setXAxis,
-  setYAxis,
-  setChart,
+    setXAxis,
+    setYAxis,
+    setChart,
 }: {
-  setXAxis: Dispatch<React.SetStateAction<string[]>>;
-  setYAxis: Dispatch<React.SetStateAction<number[]>>;
-  setChart: Dispatch<React.SetStateAction<number>>;
+    setXAxis: Dispatch<React.SetStateAction<string[]>>;
+    setYAxis: Dispatch<React.SetStateAction<number[]>>;
+    setChart: Dispatch<React.SetStateAction<number>>;
 }) => {
-  const d = localStorage.getItem("dates");
-  const v = localStorage.getItem("value");
-  const dflt_d = d !== null ? JSON.parse(d) : [null, null];
-  const dflt_v = v !== null ? JSON.parse(v) : "";
-  const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
-  const [value, setValue] = useState<string>(dflt_v);
-  const [eventsLoaded, setEventsLoaded] = useState<boolean>(false);
-  const [mergesLoaded, setMergesLoaded] = useState<boolean>(false);
+    const d = localStorage.getItem("dates");
+    const v = localStorage.getItem("value");
+    const dflt_d = d !== null ? JSON.parse(d) : [null, null];
+    const dflt_v = v !== null ? JSON.parse(v) : "";
+    
+    const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
+    const [value, setValue] = useState<string>(dflt_v);
+    const [eventsLoaded, setEventsLoaded] = useState<boolean>(false);
+    const [mergesLoaded, setMergesLoaded] = useState<boolean>(false);
+    const [xAxisCommits, setXAxisCommits] = useState<string[]>([]);
+    const [yAxisCommits, setYAxisCommits] = useState<number[]>([]);
+    const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
+    const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
 
-  const [xAxisCommits, setXAxisCommits] = useState<string[]>([]);
-  const [yAxisCommits, setYAxisCommits] = useState<number[]>([]);
-  const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
-  const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
+    useEffect(() => {
+        localStorage.setItem("dates", JSON.stringify(dates));
+        localStorage.setItem("value", JSON.stringify(value));
+    }, [dates, value]);
 
-  useEffect(() => {
-    localStorage.setItem("dates", JSON.stringify(dates));
-    localStorage.setItem("value", JSON.stringify(value));
-  }, [dates, value]);
+    const onSearch = () => {
+        if (value === "commits") {
+            console.log("y commit: ", yAxisCommits);
+            console.log("x commits: ", xAxisCommits);
+            setXAxis(xAxisCommits);
+            setYAxis(yAxisCommits);
+            setChart(1);
+        } else if (value === "merges") {
+            console.log("y merge: ", yAxisMerges);
+            console.log("x merge: ", xAxisMerges);
+            setXAxis(xAxisMerges);
+            setYAxis(yAxisMerges);
+            setChart(2);
+        } else {
+            setChart(0);
+        }
+    };
 
-  const onSearch = () => {
-    if (value === "Commits") {
-      console.log("y commit: ", yAxisCommits);
-      console.log("x commits: ", xAxisCommits);
-      setXAxis(xAxisCommits);
-      setYAxis(yAxisCommits);
-      setChart(1);
-    } else if (value === "Issues") {
-      console.log("y merge: ", yAxisMerges);
-      console.log("x merge: ", xAxisMerges);
-      setXAxis(xAxisMerges);
-      setYAxis(yAxisMerges);
-      setChart(2);
-    } else {
-      setChart(0);
+    // commits
+    useEffect(() => {
+        getEvents().then((events) => {
+            let commitsMap = new Map();
+            events
+                .filter(makeFilter(dates[0]!, dates[1]!))
+                .forEach((element: Event) => {
+                    let member = element.author.id;
+                    if (commitsMap.has(member)) {
+                        commitsMap.set(
+                            member,
+                            commitsMap.get(member) + element.push_data.commit_count
+                        );
+                    } else {
+                        commitsMap.set(member, 1);
+                    }
+                });
+            let members: string[] = [];
+            let commitsPerMember: number[] = [];
+            commitsMap.forEach((value: number, key: string) => {
+                members.push(key);
+                commitsPerMember.push(value);
+            });
+
+            setXAxisCommits(members);
+            setYAxisCommits(commitsPerMember);
+            setEventsLoaded(true);
+        });
+    }, [dates, setEventsLoaded]);
+
+    // Merges
+    useEffect(() => {
+        getMerge().then((mergeData) => {
+            let mergesMap = new Map();
+            mergeData
+                .filter(makeFilter(dates[0]!, dates[1]!))
+                .forEach((element: Merge) => {
+                    let date = new Date(element.created_at);
+                    if (mergesMap.has(date.toDateString())) {
+                        mergesMap.set(
+                            date.toDateString(),
+                            mergesMap.get(date.toDateString()) + 1
+                        );
+                    } else {
+                        mergesMap.set(date.toDateString(), 1);
+                    }
+                });
+            console.log(mergesMap);
+
+            let mergeDates: string[] = [];
+            let mergeCounts: number[] = [];
+            mergesMap.forEach((value: number, key: string) => {
+                mergeDates.push(key);
+                mergeCounts.push(value);
+            });
+            setXAxisMerges(mergeDates);
+            setYAxisMerges(mergeCounts);
+            setMergesLoaded(true);
+        });
+    }, [dates, setMergesLoaded]);
+
+    if (!mergesLoaded || !eventsLoaded) {
+        return <div>Loading....</div>;
     }
-  };
 
-  //
-  useEffect(() => {
-    getEvents().then((events) => {
-      let commitMembers = new Map();
-      events
-        .filter(makeFilter(dates[0]!, dates[1]!))
-        .forEach((element: Event) => {
-          let member = element.author.id;
-          if (commitMembers.has(member)) {
-            commitMembers.set(
-              member,
-              commitMembers.get(member) + element.push_data.commit_count
-            );
-          } else {
-            commitMembers.set(member, 1);
-          }
-        });
-      let memberKeys: string[] = [];
-      let commitNumbers: number[] = [];
-      commitMembers.forEach((value: number, key: string) => {
-        memberKeys.push(key);
-        commitNumbers.push(value);
-      });
-
-      setXAxisCommits(memberKeys);
-      setYAxisCommits(commitNumbers);
-      setEventsLoaded(true);
-    });
-  }, [dates, setEventsLoaded]);
-
-  useEffect(() => {
-    getMerge().then((mergeData) => {
-      let membersMergeRequests = new Map();
-      mergeData
-        .filter(makeFilter(dates[0]!, dates[1]!))
-        .forEach((element: Merge) => {
-          let date = new Date(element.created_at);
-          if (membersMergeRequests.has(date.toDateString())) {
-            membersMergeRequests.set(
-              date.toDateString(),
-              membersMergeRequests.get(date.toDateString()) + 1
-            );
-          } else {
-            membersMergeRequests.set(date.toDateString(), 1);
-          }
-        });
-      console.log(membersMergeRequests);
-
-      let memberMergeKeys: string[] = [];
-      let mergeNumbers: number[] = [];
-      membersMergeRequests.forEach((value: number, key: string) => {
-        memberMergeKeys.push(key);
-        mergeNumbers.push(value);
-      });
-      setXAxisMerges(memberMergeKeys);
-      setYAxisMerges(mergeNumbers);
-      setMergesLoaded(true);
-    });
-  }, [dates, setMergesLoaded]);
-
-  if (!mergesLoaded || !eventsLoaded) {
-    return <div>Loading....</div>;
-  }
-
-  return (
-    <Grid
-      container
-      rowSpacing={1}
-      columnSpacing={1}
-      justifyContent="center"
-      alignItems="center"
-      padding={2}
-    >
-      <Grid item xs={12} sm={3}>
-        <FormControl fullWidth>
-          <InputLabel id="select-label">Action</InputLabel>
-          <Select
-            labelId="select-label"
-            id="select"
-            value={value}
-            label="Action"
-            onChange={(event) => {
-              setValue(event.target.value as string);
-            }}
-          >
-            <MenuItem value={"Issues"}>Merge Data</MenuItem> // TODO: Endre til
-            mergel elns
-            <MenuItem value={"Commits"}>Commit Data</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12} sm={6}>
-        <FormControl fullWidth>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateRangePicker
-              disableFuture
-              calendars={1}
-              value={dates}
-              onChange={(newValue) => {
-                setDates(newValue);
-              }}
-              renderInput={(startProps, endProps) => (
-                <Fragment>
-                  <TextField fullWidth {...startProps} />
-                  <Box sx={{ mx: 1 }}> to </Box>
-                  <TextField fullWidth {...endProps} />
-                </Fragment>
-              )}
-            />
-          </LocalizationProvider>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12} sm={1} marginRight={1}>
-        <Button variant="contained" onClick={onSearch}>
-          Search
-        </Button>
-      </Grid>
-    </Grid>
-  );
+    return (
+        <Grid
+            container
+            rowSpacing={1}
+            columnSpacing={1}
+            justifyContent="center"
+            alignItems="center"
+            padding={2}
+        >
+            <Grid item xs={12} sm={3}>
+                <FormControl fullWidth>
+                    <InputLabel id="select-label">Action</InputLabel>
+                    <Select
+                        labelId="select-label"
+                        id="select"
+                        value={value}
+                        label="Action"
+                        onChange={(event) => {
+                            setValue(event.target.value as string);
+                        }}
+                    >
+                        <MenuItem value={"merges"}>Merge Data</MenuItem>
+                        <MenuItem value={"commits"}>Commit Data</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DateRangePicker
+                            //minDate={new Date()}
+                            disableFuture
+                            calendars={1}
+                            value={dates}
+                            onChange={(newValue) => {
+                                setDates(newValue);
+                            }}
+                            renderInput={(startProps, endProps) => (
+                                <Fragment>
+                                    <TextField fullWidth {...startProps} />
+                                    <Box sx={{ mx: 1 }}> to </Box>
+                                    <TextField fullWidth {...endProps} />
+                                </Fragment>
+                            )}
+                        />
+                    </LocalizationProvider>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={1} marginRight={1}>
+                <Button variant="contained" onClick={onSearch}>Search</Button>
+            </Grid>
+        </Grid>
+    );
 };
 
 export default Search;
