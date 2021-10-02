@@ -15,7 +15,6 @@ function App() {
     const dflt_c: number = JSON.parse(c !== null ? c : "0");
     setCount(dflt_c + 1);
     sessionStorage.setItem("count", JSON.stringify(dflt_c + 1));
-    console.log("number of reloads: ", dflt_c + 1);
   }, []);
 
   const { theme, toggleTheme } = useContext(ThemeCtx);
