@@ -12,6 +12,7 @@ function App() {
   const [xAxis, setXAxis] = useState<string[]>([]);
   const [yAxis, setYAxis] = useState<number[]>([]);
   const [chart, setChart] = useState<number>(0);
+  const [key, setKey] = useState<number>(0);
 
   /* HTML session storage is used to count the number of times the website has been refreshed. This is done
   by a useEffect which increases the counter by one each time the website is refreshed. The value is then stored
@@ -22,8 +23,17 @@ function App() {
     const dflt_c: number = JSON.parse(c !== null ? c : "0");
     sessionStorage.setItem("count", JSON.stringify(dflt_c + 1));
   }, []);
+  
+  // const { theme, toggleTheme } = useContext(ThemeCtx);
+  // let bar = true; /*implement means of setting the condition
+  // based on the input to the search component*/
 
-  /**
+  // const [memberKeys, setMemberKeys] = useState<string[]>([]);
+  // const [commitNumbers, setCommitNumbers] = useState<number[]>([]);
+  // const [chart, setChart] = useState<number>(0);
+  // const [key, setKey] = useState<number>(0);
+
+/**
    * Renders a BarChart if search action is commits, a LineChart if search-acion is merges, or nothing if 
    * a search has not been made yet.
    */
@@ -33,10 +43,15 @@ function App() {
       return <BarChart xAxis={xAxis} yAxis={yAxis} />;
     } else if (chart === 2) {
       console.log('lineChart: ', xAxis, yAxis)
-      return <LineChart xAxis={xAxis} yAxis={yAxis} />;
+      return <LineChart key={key} xAxis={xAxis} yAxis={yAxis} />;
     } else {
-      return <p>please make a search</p>;
+      return <p>Perform a search to display data</p>;
     }
+    //   //LINECHART SKAL HA ANDRE DATA, SE VARIABELNAVN
+    //   return <LineChart key={key} dates={memberKeys} merges={commitNumbers} />;
+    // } else {
+    //   return <p>Perform a search to display data</p>;
+    // }
   };
 
   return (
@@ -48,7 +63,9 @@ function App() {
             setYAxis={setYAxis}
             setXAxis={setXAxis}
             setChart={setChart}
-          />
+            setKey={setKey}
+          ></Search>
+
         </div>
         <div className="toggle">
           <ToggleButton

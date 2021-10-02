@@ -23,13 +23,17 @@ const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
  * the information from the backend functions and sends the axe-value to the parent node, App
  */
 const Search = ({
-    setXAxis,
-    setYAxis,
-    setChart,
+
+  setXAxis,
+  setYAxis,
+  setChart,
+  setKey,
 }: {
-    setXAxis: Dispatch<React.SetStateAction<string[]>>;
-    setYAxis: Dispatch<React.SetStateAction<number[]>>;
-    setChart: Dispatch<React.SetStateAction<number>>;
+  setXAxis: Dispatch<React.SetStateAction<string[]>>;
+  setYAxis: Dispatch<React.SetStateAction<number[]>>;
+  setChart: Dispatch<React.SetStateAction<number>>;
+  setKey: Dispatch<React.SetStateAction<number>>;
+
 }) => {
     const d = localStorage.getItem("dates");
     const v = localStorage.getItem("value");
@@ -63,6 +67,7 @@ const Search = ({
             setXAxis(xAxisMerges);
             setYAxis(yAxisMerges);
             setChart(2);
+            setKey(Math.floor(Math.random() * 100));
         } else {
             setChart(0);
         }
@@ -90,6 +95,7 @@ const Search = ({
      */
     useEffect(() => {
         getEvents().then((events) => {
+            console.log(events)
             let commitsMap = new Map();
             events
                 .filter(makeFilter(dates[0]!, dates[1]!))
@@ -141,8 +147,8 @@ const Search = ({
                 mergeDates.push(key);
                 mergeCounts.push(value);
             });
-            setXAxisMerges(mergeDates);
-            setYAxisMerges(mergeCounts);
+            setXAxisMerges(mergeDates.reverse());
+            setYAxisMerges(mergeCounts.reverse());
             setMergesLoaded(true);
         });
     }, [dates, setMergesLoaded]);
