@@ -24,10 +24,6 @@ Lists of colores for the different x-axis elements in the diagram are provided *
         m: this.props.merges
       };
 
-    componentWillReceiveProps(nextProps: { dates: Array<string>; merges: Array<number> }) {
-        this.setState({ d: nextProps.dates, m: nextProps.merges});  
-    };
-
     data = {
         labels: this.state.d,
         datasets: [{
