@@ -29,15 +29,3 @@ test('renders all elements correctly', () => {
 
 });
 
-it('Test click event', () => {
-  const mockCallBack = jest.fn();
-
-  const bt = shallow((<ToggleButton 
-    id="toggleTheme"
-    value="web"
-    size="small"
-    onClick={mockCallBack}/>));
-  //bt.find('toggleTheme').at(0).simulate('click');
-  //expect(mockCallBack.mock.calls.length).toEqual(1);
-  
-});
