@@ -50,6 +50,10 @@ const Search = ({
   const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
   const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
 
+  /* The selected dates and action is stored locally on the website by use of HTML localStorage. The 
+  dates are converted into a string and placed in a JSON file before they are stored. When called upon, 
+  they are parsed back to its original format. The same applies to the action value. We use a useEffect 
+  to perform the storing of the data on the site. */
   useEffect(() => {
     localStorage.setItem("dates", JSON.stringify(dates));
     localStorage.setItem("value", JSON.stringify(value));
