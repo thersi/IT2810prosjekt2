@@ -24,15 +24,15 @@ const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
  */
 const Search = ({
 
-  setXAxis,
-  setYAxis,
-  setChart,
-  setKey,
+    setXAxis,
+    setYAxis,
+    setChart,
+    setKey,
 }: {
-  setXAxis: Dispatch<React.SetStateAction<string[]>>;
-  setYAxis: Dispatch<React.SetStateAction<number[]>>;
-  setChart: Dispatch<React.SetStateAction<number>>;
-  setKey: Dispatch<React.SetStateAction<number>>;
+    setXAxis: Dispatch<React.SetStateAction<string[]>>;
+    setYAxis: Dispatch<React.SetStateAction<number[]>>;
+    setChart: Dispatch<React.SetStateAction<number>>;
+    setKey: Dispatch<React.SetStateAction<number>>;
 
 }) => {
     const d = localStorage.getItem("dates");
@@ -56,14 +56,10 @@ const Search = ({
      */
     const onSearch = () => {
         if (value === "commits") {
-            console.log("y commit: ", yAxisCommits);
-            console.log("x commits: ", xAxisCommits);
             setXAxis(xAxisCommits);
             setYAxis(yAxisCommits);
             setChart(1);
         } else if (value === "merges") {
-            console.log("y merge: ", yAxisMerges);
-            console.log("x merge: ", xAxisMerges);
             setXAxis(xAxisMerges);
             setYAxis(yAxisMerges);
             setChart(2);
@@ -82,7 +78,6 @@ const Search = ({
     useEffect(() => {
         localStorage.setItem("dates", JSON.stringify(dates));
         localStorage.setItem("value", JSON.stringify(value));
-        console.log(dates[0], dates[1], value)
         if (dates[0] !== null && dates[1] !== null && value !== '') {
             setBtnDisable(false)
         } else {
@@ -95,7 +90,6 @@ const Search = ({
      */
     useEffect(() => {
         getEvents().then((events) => {
-            console.log(events)
             let commitsMap = new Map();
             events
                 .filter(makeFilter(dates[0]!, dates[1]!))

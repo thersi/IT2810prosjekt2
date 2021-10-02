@@ -5,9 +5,9 @@ Component ment to show number of commits per person
 */
 
 export default function BarChart({ xAxis, yAxis }: { xAxis: Array<string>; yAxis: Array<number> }) {
-/* The component takes inn an array of "members" and and array og "commits pr. member"
-Members are displayed at the x-axis, and number of commits at the y-axis.
-Lists of colores for the different x-axis elements in the diagram are provided */
+    /* The component takes inn an array of "members" and and array og "commits pr. member"
+    Members are displayed at the x-axis, and number of commits at the y-axis.
+    Lists of colores for the different x-axis elements in the diagram are provided */
     const data = {
         labels: xAxis,
         datasets: [{
@@ -39,7 +39,7 @@ Lists of colores for the different x-axis elements in the diagram are provided *
         maintainAspectRatio: false,
 
         plugins: {
-            title: {    
+            title: {
                 display: true,
                 text: "Number of commits per person",
                 padding: {
@@ -76,8 +76,8 @@ Lists of colores for the different x-axis elements in the diagram are provided *
         }
     }
     return (
-        
-            <Bar id="barChart" data={data} options={options} />
-        
+
+        <Bar id="barChart" data={data} options={options} />
+
     )
 }
