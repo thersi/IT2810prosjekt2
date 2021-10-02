@@ -31,7 +31,7 @@ const Search = ({
     const v = localStorage.getItem("value");
     const dflt_d = d !== null ? JSON.parse(d) : [null, null];
     const dflt_v = v !== null ? JSON.parse(v) : "";
-    
+
     const [dates, setDates] = useState<DateRange<Date>>(dflt_d);
     const [value, setValue] = useState<string>(dflt_v);
     const [eventsLoaded, setEventsLoaded] = useState<boolean>(false);
@@ -40,11 +40,7 @@ const Search = ({
     const [yAxisCommits, setYAxisCommits] = useState<number[]>([]);
     const [xAxisMerges, setXAxisMerges] = useState<string[]>([]);
     const [yAxisMerges, setYAxisMerges] = useState<number[]>([]);
-
-    useEffect(() => {
-        localStorage.setItem("dates", JSON.stringify(dates));
-        localStorage.setItem("value", JSON.stringify(value));
-    }, [dates, value]);
+    const [btnDisable, setBtnDisable] = useState<boolean>(true)
 
     const onSearch = () => {
         if (value === "commits") {
@@ -63,6 +59,21 @@ const Search = ({
             setChart(0);
         }
     };
+
+    /* The selected dates and action is stored locally on the website by use of HTML localStorage. The 
+    dates are converted into a string and placed in a JSON file before they are stored. When called upon, 
+    they are parsed back to its original format. The same applies to the action value. We use a useEffect 
+    to perform the storing of the data on the site. */
+    useEffect(() => {
+        localStorage.setItem("dates", JSON.stringify(dates));
+        localStorage.setItem("value", JSON.stringify(value));
+        console.log(dates[0], dates[1], value)
+        if (dates[0] !== null && dates[1] !== null && value !== '') {
+            setBtnDisable(false)
+        } else {
+            setBtnDisable(true)
+        }
+    }, [dates, value]);
 
     // commits
     useEffect(() => {
@@ -87,7 +98,6 @@ const Search = ({
                 members.push(key);
                 commitsPerMember.push(value);
             });
-
             setXAxisCommits(members);
             setYAxisCommits(commitsPerMember);
             setEventsLoaded(true);
@@ -111,8 +121,6 @@ const Search = ({
                         mergesMap.set(date.toDateString(), 1);
                     }
                 });
-            console.log(mergesMap);
-
             let mergeDates: string[] = [];
             let mergeCounts: number[] = [];
             mergesMap.forEach((value: number, key: string) => {
@@ -148,8 +156,7 @@ const Search = ({
                         label="Action"
                         onChange={(event) => {
                             setValue(event.target.value as string);
-                        }}
-                    >
+                        }}>
                         <MenuItem value={"merges"}>Merge Data</MenuItem>
                         <MenuItem value={"commits"}>Commit Data</MenuItem>
                     </Select>
@@ -159,7 +166,6 @@ const Search = ({
                 <FormControl fullWidth>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DateRangePicker
-                            //minDate={new Date()}
                             disableFuture
                             calendars={1}
                             value={dates}
@@ -178,7 +184,7 @@ const Search = ({
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={1} marginRight={1}>
-                <Button variant="contained" onClick={onSearch}>Search</Button>
+                <Button disabled={btnDisable} variant="contained" onClick={onSearch}>Search</Button>
             </Grid>
         </Grid>
     );

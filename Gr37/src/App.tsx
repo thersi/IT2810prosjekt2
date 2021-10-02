@@ -13,6 +13,11 @@ function App() {
   const [yAxis, setYAxis] = useState<number[]>([]);
   const [chart, setChart] = useState<number>(0);
 
+  /* HTML session storage is used to count the number of times the website has been refreshed. This is done
+  by a useEffect which increases the counter by one each time the website is refreshed. The value is then stored
+  in the session storage as a JSON file. When needed, the value is collected from the JSON file and parsed back to 
+  its orginal format. */ 
+
   useEffect(() => {
     const c = sessionStorage.getItem("count");
     const dflt_c: number = JSON.parse(c !== null ? c : "0");
