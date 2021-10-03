@@ -18,6 +18,7 @@ const getDateTimeFix = (date: Date): number => {
   return new Date(date).getTime();
 };
 
+//
 type DateFilter = (merge_data: Merge) => boolean;
 const makeFilter = (start_date: Date, end_date: Date): DateFilter => {
   const start_time = getDateTimeFix(start_date);
@@ -73,7 +74,7 @@ const Search = ({
     }
   };
 
-  //
+  //Here we filter commit number based on commit author, this is sorted through a Map
   useEffect(() => {
     getEvents().then((events) => {
       let commitMembers = new Map();
@@ -99,7 +100,7 @@ const Search = ({
 
       setXAxisCommits(memberKeys);
       setYAxisCommits(commitNumbers);
-      setEventsLoaded(true);
+      setEventsLoaded(true); //if true, useEffect is called upon
     });
   }, [dates, setEventsLoaded]);
 
