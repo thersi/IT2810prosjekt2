@@ -100,9 +100,6 @@ const Search = ({
     getEvents().then((events) => {
       let commitsMap = new Map();
       events
-        .filter((data: Event) => {
-          return data.action_name === "pushed to";
-        })
         .filter(makeFilter(dates[0]!, dates[1]!))
         .forEach((element: Event) => {
           let member = element.author.id;
